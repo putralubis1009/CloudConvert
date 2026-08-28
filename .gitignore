@@ -1,0 +1,39 @@
+# Dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# Next.js build output
+/.next/
+/out/
+
+# Production build artifacts (Electron / desktop distributions)
+/dist*/
+/build/
+
+# Debug and system logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+*.log
+
+# Environment variables
+.env*.local
+.env
+
+# Vercel
+.vercel
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# OS metadata
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Temporary workspaces
+/tmp/
+/temp/

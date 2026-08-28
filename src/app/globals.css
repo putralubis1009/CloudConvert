@@ -1,0 +1,111 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  /* Glass Effects */
+  .glass-nav {
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+  }
+  .glass-card {
+    backdrop-filter: blur(16px) saturate(160%);
+    -webkit-backdrop-filter: blur(16px) saturate(160%);
+  }
+  /* Glow Text */
+  .text-glow-brand {
+    text-shadow: 0 0 40px rgba(99, 102, 241, 0.6), 0 0 80px rgba(99, 102, 241, 0.3);
+  }
+  .text-glow-cyan {
+    text-shadow: 0 0 40px rgba(34, 211, 238, 0.5), 0 0 80px rgba(34, 211, 238, 0.2);
+  }
+  /* Glow Borders */
+  .border-glow-brand {
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.25), inset 0 0 20px rgba(99, 102, 241, 0.05);
+  }
+  .border-glow-cyan {
+    box-shadow: 0 0 20px rgba(34, 211, 238, 0.25), inset 0 0 20px rgba(34, 211, 238, 0.05);
+  }
+  /* Card Hover Glow */
+  .card-glow:hover {
+    box-shadow: 0 0 30px rgba(99, 102, 241, 0.2), 0 20px 60px rgba(0, 0, 0, 0.4);
+  }
+  /* Shimmer */
+  .shimmer {
+    background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.05) 50%, transparent 100%);
+    background-size: 200% 100%;
+    animation: shimmer 2.5s infinite;
+  }
+  /* Mesh Gradient overlay */
+  .mesh-bg {
+    background-image:
+      radial-gradient(ellipse at 20% 20%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 80%, rgba(34, 211, 238, 0.1) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 50%, rgba(139, 92, 246, 0.08) 0%, transparent 70%);
+  }
+  /* Reveal animation */
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    animation: revealUp 0.7s ease forwards;
+  }
+  .reveal-delay-1 { animation-delay: 0.1s; }
+  .reveal-delay-2 { animation-delay: 0.2s; }
+  .reveal-delay-3 { animation-delay: 0.3s; }
+  .reveal-delay-4 { animation-delay: 0.4s; }
+}
+
+/* Keyframes */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes revealUp {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes gradientShift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+@keyframes orbFloat {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(30px, -20px) scale(1.05); }
+  66% { transform: translate(-20px, 15px) scale(0.97); }
+}
+
+@keyframes scanLine {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}
+
+/* Animated gradient background */
+.animated-gradient {
+  background: linear-gradient(-45deg, #0d0f1a, #0f172a, #0d1117, #0a0d1a);
+  background-size: 400% 400%;
+  animation: gradientShift 12s ease infinite;
+}
+
+/* Floating orb */
+.orb-float {
+  animation: orbFloat 10s ease-in-out infinite;
+}
+
+/* Premium Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, rgba(99,102,241,0.5), rgba(34,211,238,0.3));
+  border-radius: 99px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, rgba(99,102,241,0.8), rgba(34,211,238,0.5));
+}
+
+/* Selection color */
+::selection {
+  background: rgba(99, 102, 241, 0.3);
+  color: white;
+}

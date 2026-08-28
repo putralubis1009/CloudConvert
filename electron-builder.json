@@ -1,0 +1,51 @@
+{
+  "appId": "com.cloudconvertervideo.desktop",
+  "productName": "Cloud Converter Video",
+  "copyright": "Copyright © 2026 Cloud Converter Video Team",
+  "asar": false,
+  "directories": {
+    "output": "dist-v13"
+  },
+  "files": [
+    "electron/**/*",
+    ".next/**/*",
+    "public/**/*",
+    "package.json",
+    "next.config.mjs",
+    "!**/*.map",
+    "!**/src/**/*",
+    "!**/.git/**/*",
+    "!**/test/**/*",
+    "!**/*.test.*",
+    "!**/*.spec.*",
+    "!**/node_modules/.cache/**/*"
+  ],
+  "win": {
+    "target": [
+      {
+        "target": "nsis",
+        "arch": ["x64"]
+      },
+      {
+        "target": "portable",
+        "arch": ["x64"]
+      }
+    ],
+    "artifactName": "CloudConverterVideo-Setup-${version}.${ext}"
+  },
+  "nsis": {
+    "oneClick": false,
+    "allowToChangeInstallationDirectory": true,
+    "createDesktopShortcut": true,
+    "createStartMenuShortcut": true,
+    "shortcutName": "Cloud Converter Video"
+  },
+  "mac": {
+    "target": ["dmg"],
+    "category": "public.app-category.video"
+  },
+  "linux": {
+    "target": ["AppImage", "deb"],
+    "category": "Video"
+  }
+}
