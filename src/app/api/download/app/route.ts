@@ -77,6 +77,9 @@ export async function GET(req: NextRequest) {
           "Cache-Control": "public, max-age=3600",
         },
       });
+    } else {
+      // In cloud/production (Vercel), redirect directly to GitHub Releases hosted binary
+      return NextResponse.redirect("https://github.com/putralubis1009/CloudConvert/releases/download/v1.7.0/CloudConverterVideo-Setup-1.7.0.exe", 302);
     }
   }
 

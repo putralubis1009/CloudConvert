@@ -102,6 +102,8 @@ export async function GET(
           "Cache-Control": "public, max-age=3600",
         },
       });
+    } else {
+      return NextResponse.redirect("https://github.com/putralubis1009/CloudConvert/releases/download/v1.7.0/CloudConverterVideo-Setup-1.7.0.exe", 302);
     }
   }
 
