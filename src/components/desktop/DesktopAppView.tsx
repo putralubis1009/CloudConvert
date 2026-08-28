@@ -36,6 +36,7 @@ import {
   Square,
   ChevronDown,
   ChevronUp,
+  Sparkles,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { UpdateNotifier } from "./UpdateNotifier";
