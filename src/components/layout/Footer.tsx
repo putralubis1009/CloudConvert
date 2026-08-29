@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { CloudUpload, Heart, Github } from "lucide-react";
+import { CloudUpload, ShieldCheck, Zap } from "lucide-react";
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
@@ -26,27 +26,17 @@ export function Footer() {
                 </span>
               </div>
             </div>
-            <p className="text-sm text-slate-500 max-w-sm leading-relaxed">
-              Render video multi-resolusi hingga 4K, convert ke HLS/MP4/WebM, dan upload otomatis ke Cloudflare R2, Amazon S3, dan cloud storage lainnya.
+            <p className="text-xs text-slate-500 max-w-sm leading-relaxed">
+              Platform & Software Transcoding Video HLS modern bertenaga FFmpeg Native dengan akselerasi GPU dan integrasi multi-cloud storage otomatis.
             </p>
-            <div className="flex items-center gap-4 text-slate-600">
-              <a
-                href="https://github.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-brand-400 transition"
-              >
-                <Github className="w-5 h-5" />
-              </a>
-            </div>
           </div>
 
-          {/* Col 2: Nav */}
+          {/* Col 2: Navigation */}
           <div>
             <p className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-5">
               Navigasi
             </p>
-            <ul className="space-y-3 text-sm text-slate-600">
+            <ul className="space-y-3 text-sm text-slate-500">
               {[
                 { href: "/#konversi", label: "Konversi Online" },
                 { href: "/render", label: "Render Studio" },
@@ -69,27 +59,28 @@ export function Footer() {
           {/* Col 3: Info */}
           <div>
             <p className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-5">
-              Spesifikasi
+              Spesifikasi Sistem
             </p>
-            <ul className="space-y-3 text-sm text-slate-600">
-              <li>Format: HLS · MP4 · WebM · MP3</li>
-              <li>Resolusi: 144p – 4K UHD</li>
-              <li>Segmen: 5 / 10 / 15 detik</li>
-              <li>Upload: R2 · S3 · Spaces · B2</li>
-              <li>Engine: FFmpeg Native GPU</li>
+            <ul className="space-y-3 text-sm text-slate-500">
+              <li>Format: HLS (M3U8 / TS) · MP4 · WebM · MP3</li>
+              <li>Resolusi: 144p – 4K UHD (2160p)</li>
+              <li>Segmen: 5s / 10s / 15s VOD Adaptive</li>
+              <li>Cloud: Cloudflare R2 · AWS S3 · Spaces · B2</li>
+              <li>Engine: FFmpeg Native + GPU Accelerated</li>
             </ul>
           </div>
         </div>
 
         {/* Bottom bar */}
-        <div className="pt-8 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-700 gap-4">
-          <p>&copy; {currentYear} Cloud Converter Video. Dibuat untuk semua kreator & developer.</p>
-          <p className="flex items-center gap-1.5">
-            Dibuat dengan <Heart className="w-3.5 h-3.5 text-rose-500 fill-rose-500" /> penuh dedikasi.
-          </p>
+        <div className="pt-8 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-4">
+          <p>&copy; {currentYear} Cloud Converter Video. All rights reserved.</p>
+          <div className="flex flex-wrap items-center gap-3 text-slate-500 text-[11px]">
+            <span className="flex items-center gap-1"><ShieldCheck className="w-3.5 h-3.5 text-emerald-400" /> Privacy-First Architecture</span>
+            <span>•</span>
+            <span className="flex items-center gap-1"><Zap className="w-3.5 h-3.5 text-cyan-400" /> High-Performance GPU Engine</span>
+          </div>
         </div>
       </div>
     </footer>
   );
 }
-
