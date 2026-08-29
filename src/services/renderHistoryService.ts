@@ -1,6 +1,7 @@
 import { INITIAL_RENDER_HISTORY, RenderHistoryItem } from "@/data/mockHistory";
 
-const STORAGE_KEY = "hls_converter_render_history_v1";
+const STORAGE_KEY = "cloud_converter_video_history_v1";
+
 
 class RenderHistoryService {
   private isBrowser(): boolean {

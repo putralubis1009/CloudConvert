@@ -91,14 +91,13 @@ function UploadStep({
   onVideoChange: (v: VideoFile) => void;
   onNext: () => void;
 }) {
-  const hasFile = videoFile.real !== null || videoFile.mock !== null;
+  const hasFile = videoFile.real !== null;
 
   return (
     <div className="space-y-6">
       <VideoUpload
         value={videoFile}
         onChange={onVideoChange}
-        showMockPicker
       />
 
       {/* Next Button */}

@@ -29,21 +29,11 @@ import { OutputFolderPicker, type OutputFolderConfig } from "@/components/studio
 import { RenderConsole } from "@/components/studio/RenderConsole";
 import { type SegmentDuration } from "@/components/ui/SegmentPicker";
 import { useRenderSimulation } from "@/components/ui/RenderProgress";
-import { MOCK_VIDEOS_LIST } from "@/data/mockVideos";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 
 export default function RenderStudioPage() {
-  const [sourceVideo, setSourceVideo] = useState<SelectedSourceVideo>({
-    name: MOCK_VIDEOS_LIST[0].name,
-    sizeMB: MOCK_VIDEOS_LIST[0].sizeMB,
-    durationSec: MOCK_VIDEOS_LIST[0].durationSec,
-    resolution: MOCK_VIDEOS_LIST[0].resolution,
-    fps: MOCK_VIDEOS_LIST[0].fps,
-    codec: MOCK_VIDEOS_LIST[0].codec,
-    isMock: true,
-    mockId: MOCK_VIDEOS_LIST[0].id,
-  });
+  const [sourceVideo, setSourceVideo] = useState<SelectedSourceVideo | null>(null);
   const [resolutionConfig, setResolutionConfig] = useState<ResolutionConfig>({
     selected: "720p",
     enableAdaptiveLadder: false,
@@ -52,15 +42,15 @@ export default function RenderStudioPage() {
   });
   const [segmentSec, setSegmentSec] = useState<SegmentDuration>(10);
   const [folderConfig, setFolderConfig] = useState<OutputFolderConfig>({
-    path: "C:\\Users\\User\\Videos\\HLS_Output",
+    path: "C:\\Users\\User\\Videos\\Cloud_Converter_Output",
     createSubfolder: true,
-    subfolderName: "trailer_big_buck_bunny_720p",
+    subfolderName: "video_output",
   });
   const [isPlaying, setIsPlaying] = useState(false);
   const [logs, setLogs] = useState<string[]>([
-    "[FFmpeg] WebAssembly Core Initialized.",
-    "[FFmpeg] Codec support: H.264 / AAC / MP3 / MPEG-TS / M3U8.",
-    "[Ready] Menunggu perintah render.",
+    "[Engine] Cloud Converter Video Engine Siap.",
+    "[Format] Dukungan format: HLS (M3U8 / TS), MP4, WebM, MP3.",
+    "[Ready] Silakan pilih file video dari komputer Anda untuk memulai.",
   ]);
 
   const { state: renderState, start: startRender, reset: resetRender } = useRenderSimulation({
@@ -68,9 +58,10 @@ export default function RenderStudioPage() {
       const dest = folderConfig.createSubfolder
         ? `${folderConfig.path}\\${folderConfig.subfolderName}`
         : folderConfig.path;
+      const duration = sourceVideo?.durationSec || 120;
       setLogs((prev) => [
         ...prev,
-        `[Done] Segmentasi HLS selesai: ~${Math.ceil((sourceVideo.durationSec / segmentSec))} segmen .ts + master.m3u8 dibuat.`,
+        `[Done] Segmentasi HLS selesai: ~${Math.ceil((duration / segmentSec))} segmen .ts + master.m3u8 dibuat.`,
         `[Output] File tersimpan di direktori: ${dest}`,
       ]);
     },
@@ -79,28 +70,37 @@ export default function RenderStudioPage() {
   const isRendering = renderState.status === "rendering";
   const isDone = renderState.status === "done";
 
-  const handleSourceVideoChange = (newSource: SelectedSourceVideo) => {
+  const handleSourceVideoChange = (newSource: SelectedSourceVideo | null) => {
     setSourceVideo(newSource);
-    const safeSlug = newSource.name.replace(/\.mp4$/i, "").replace(/[^a-zA-Z0-9_-]/g, "_");
-    setFolderConfig((prev) => ({
-      ...prev,
-      subfolderName: safeSlug,
-    }));
-    resetRender();
-    setLogs([
-      `[Ready] Video sumber '${newSource.name}' dipilih (${newSource.resolution}, ${newSource.sizeMB}MB).`,
-      `[Output] Target subfolder: \\${safeSlug}`,
-    ]);
+    if (newSource) {
+      const safeSlug = newSource.name.replace(/\.[a-zA-Z0-9]+$/i, "").replace(/[^a-zA-Z0-9_-]/g, "_");
+      setFolderConfig((prev) => ({
+        ...prev,
+        subfolderName: safeSlug,
+      }));
+      resetRender();
+      setLogs([
+        `[Ready] Video sumber '${newSource.name}' dipilih (${newSource.resolution}, ${newSource.sizeMB}MB).`,
+        `[Output] Target subfolder: \\${safeSlug}`,
+      ]);
+    } else {
+      resetRender();
+      setLogs(["[Ready] Silakan pilih file video dari komputer Anda untuk memulai."]);
+    }
   };
 
   const handleStart = () => {
+    if (!sourceVideo) {
+      setLogs((prev) => [...prev, "[Peringatan] Harap pilih file video sumber terlebih dahulu!"]);
+      return;
+    }
     const targetLabel = resolutionConfig.enableAdaptiveLadder
       ? `Multi-Bitrate (${resolutionConfig.activeVariants.join(", ")})`
       : resolutionConfig.selected;
     setLogs([
       `[Task] Memulai transcode '${sourceVideo.name}'...`,
       `[Config] Target resolusi: ${targetLabel}, segmen: ${segmentSec} detik, preset: ${resolutionConfig.qualityPreset}.`,
-      `[Engine] Menjalankan FFmpeg WebAssembly transcode thread...`,
+      `[Engine] Menjalankan transcoding pipeline...`,
       `[Demux] Membaca video bitstream (${sourceVideo.resolution}, ${sourceVideo.fps}fps)...`,
     ]);
     startRender();
@@ -155,54 +155,64 @@ export default function RenderStudioPage() {
             <div className="lg:col-span-5 space-y-4">
               {/* Video Player Preview Box */}
               <div className="rounded-2xl border border-slate-800 bg-slate-900/80 overflow-hidden shadow-xl">
-                <div className="p-4 border-b border-slate-800 flex items-center justify-between">
+                <div className="p-4 flex items-center justify-between border-b border-slate-800">
                   <div className="flex items-center gap-2 text-sm font-semibold text-slate-200">
                     <FileVideo className="w-4 h-4 text-brand-400" />
                     <span>Pratinjau Video Sumber</span>
                   </div>
-                  <span className="px-2 py-0.5 text-[10px] font-bold rounded-full bg-brand-500/20 text-brand-300 border border-brand-500/30">
-                    {sourceVideo.resolution}
-                  </span>
-                </div>
-
-                {/* Simulated Video Canvas */}
-                <div className="relative aspect-video bg-black flex items-center justify-center group overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20" />
-                  
-                  {/* Center Play/Pause button */}
-                  <button
-                    type="button"
-                    onClick={() => setIsPlaying(!isPlaying)}
-                    className="relative z-10 w-14 h-14 rounded-full bg-brand-600/90 hover:bg-brand-500 text-white flex items-center justify-center shadow-lg transition-transform group-hover:scale-110"
-                    aria-label={isPlaying ? "Pause" : "Play"}
-                  >
-                    {isPlaying ? <Pause className="w-6 h-6" /> : <Play className="w-6 h-6 ml-0.5" />}
-                  </button>
-
-                  {/* Video meta watermark */}
-                  <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-xs text-slate-300 z-10">
-                    <span className="font-mono truncate max-w-[200px]">{sourceVideo.name}</span>
-                    <span className="font-mono bg-black/60 px-2 py-0.5 rounded">
-                      {Math.floor(sourceVideo.durationSec / 60)}:00
+                  {sourceVideo && (
+                    <span className="px-2 py-0.5 text-[10px] font-bold rounded-full bg-brand-500/20 text-brand-300 border border-brand-500/30">
+                      {sourceVideo.resolution}
                     </span>
-                  </div>
+                  )}
                 </div>
+
+                {/* Video Canvas / Placeholder */}
+                {sourceVideo ? (
+                  <div className="relative aspect-video bg-black flex items-center justify-center group overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20" />
+                    
+                    <button
+                      type="button"
+                      onClick={() => setIsPlaying(!isPlaying)}
+                      className="relative z-10 w-14 h-14 rounded-full bg-brand-600/90 hover:bg-brand-500 text-white flex items-center justify-center shadow-lg transition-transform group-hover:scale-110"
+                      aria-label={isPlaying ? "Pause" : "Play"}
+                    >
+                      {isPlaying ? <Pause className="w-6 h-6" /> : <Play className="w-6 h-6 ml-0.5" />}
+                    </button>
+
+                    <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-xs text-slate-300 z-10">
+                      <span className="font-mono truncate max-w-[200px]">{sourceVideo.name}</span>
+                      <span className="font-mono bg-black/60 px-2 py-0.5 rounded">
+                        {Math.floor(sourceVideo.durationSec / 60)}:00
+                      </span>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="aspect-video bg-slate-950 flex flex-col items-center justify-center text-center p-6 text-slate-500 space-y-2">
+                    <FileVideo className="w-10 h-10 text-slate-700 animate-pulse" />
+                    <p className="text-xs font-medium text-slate-400">Belum ada video dipilih</p>
+                    <p className="text-[10px] text-slate-600">Pilih file video di bawah untuk melihat rincian & memulai render</p>
+                  </div>
+                )}
 
                 {/* Video Info Strip */}
-                <div className="p-4 grid grid-cols-3 gap-2 text-center divide-x divide-slate-800 text-xs">
-                  <div>
-                    <span className="text-slate-500 block text-[10px]">UKURAN</span>
-                    <span className="font-semibold text-slate-200 font-mono">{sourceVideo.sizeMB} MB</span>
+                {sourceVideo && (
+                  <div className="p-4 grid grid-cols-3 gap-2 text-center divide-x divide-slate-800 text-xs">
+                    <div>
+                      <span className="text-slate-500 block text-[10px]">UKURAN</span>
+                      <span className="font-semibold text-slate-200 font-mono">{sourceVideo.sizeMB} MB</span>
+                    </div>
+                    <div>
+                      <span className="text-slate-500 block text-[10px]">DURASI</span>
+                      <span className="font-semibold text-slate-200 font-mono">{sourceVideo.durationSec}s</span>
+                    </div>
+                    <div>
+                      <span className="text-slate-500 block text-[10px]">CODEC</span>
+                      <span className="font-semibold text-slate-200 font-mono">{sourceVideo.codec}</span>
+                    </div>
                   </div>
-                  <div>
-                    <span className="text-slate-500 block text-[10px]">DURASI</span>
-                    <span className="font-semibold text-slate-200 font-mono">{sourceVideo.durationSec}s</span>
-                  </div>
-                  <div>
-                    <span className="text-slate-500 block text-[10px]">CODEC</span>
-                    <span className="font-semibold text-slate-200 font-mono">{sourceVideo.codec}</span>
-                  </div>
-                </div>
+                )}
               </div>
 
               {/* Source Video Component with Details */}
@@ -235,7 +245,7 @@ export default function RenderStudioPage() {
                 <SegmentController
                   segmentSec={segmentSec}
                   onChange={setSegmentSec}
-                  videoDurationSec={sourceVideo.durationSec}
+                  videoDurationSec={sourceVideo?.durationSec || 120}
                   disabled={isRendering}
                 />
 
@@ -257,7 +267,7 @@ export default function RenderStudioPage() {
                     ? `${folderConfig.path}\\${folderConfig.subfolderName}`
                     : folderConfig.path
                 }
-                videoTitle={sourceVideo.name}
+                videoTitle={sourceVideo?.name || "Belum ada video dipilih"}
                 onStart={handleStart}
                 onReset={() => {
                   resetRender();

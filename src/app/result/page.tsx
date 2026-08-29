@@ -36,7 +36,24 @@ function RenderResultContent() {
   const jobId = searchParams.get("jobId") || searchParams.get("id");
   const { showToast } = useToast();
 
-  const [job, setJob] = useState<RenderHistoryItem>(INITIAL_RENDER_HISTORY[0]);
+  const DEFAULT_JOB: RenderHistoryItem = {
+    id: "job_latest",
+    filename: "video_output.mp4",
+    sourceSize: "120.0 MB",
+    resolutions: ["1080p", "720p"],
+    segmentDuration: 10,
+    outputFolder: "C:\\Users\\User\\Videos\\Cloud_Converter_Output",
+    outputSize: "85.4 MB",
+    tsSegmentsCount: 24,
+    status: "completed",
+    progress: 100,
+    createdAt: new Date().toISOString(),
+    fps: 60.0,
+    masterM3u8Url: "",
+    zipDownloadUrl: "",
+  };
+
+  const [job, setJob] = useState<RenderHistoryItem>(DEFAULT_JOB);
   const [selectedRes, setSelectedRes] = useState<string>("1080p");
   const [copiedType, setCopiedType] = useState<string | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -53,7 +70,7 @@ function RenderResultContent() {
       }
     }
     const list = renderHistoryService.getHistory();
-    if (list.length > 0) {
+    if (list && list.length > 0) {
       setJob(list[0]);
       setSelectedRes(list[0].resolutions[0] || "1080p");
     }
